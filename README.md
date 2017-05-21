@@ -26,8 +26,8 @@ npm install || yarn
 | ------ | ------- | ----------- |
 | `-h, --help` | N/A | Output help information |
 | `-v, --version` | N/A | Output version information |
-| `-i, --in, --input` | `input.ndjson` | Specify input file |
-| `-o, --out, --output` | `output` | Specify output directory |
+| `-i, --input` | `input.ndjson` | Specify input file |
+| `-o, --output` | `output` | Specify output directory |
 | `-m, --max` | `100` | Specify max amount of output files (-1 for no limit) |
 | `--recognized` | `false` | Only convert drawings recognized by quickdraw |
 
