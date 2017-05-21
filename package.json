@@ -1,0 +1,20 @@
+{
+  "name": "quickdraw-extractor",
+  "description": "This tool will read quickdraw-dataset .ndjson files, and extract the actual drawings.",
+  "version": "1.0.0",
+  "main": "./src/index.js",
+  "license": "MIT",
+  "author": {
+    "name": "Raqbit",
+    "email": "raqbit@outlook.com",
+    "url": "raqbit.github.io"
+  },
+  "scripts": {
+    "start": "node ./src/index.js"
+  },
+  "dependencies": {
+    "commander": "^2.9.0",
+    "ndjson": "^1.5.0",
+    "svg-builder": "https://github.com/pinchtools/svg-builder#a212171"
+  }
+}
