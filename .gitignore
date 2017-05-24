@@ -60,3 +60,6 @@ typings/
 
 # ndjson files
 *.ndjson
+
+# Potential output files
+output/

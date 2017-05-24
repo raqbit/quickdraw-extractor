@@ -2,37 +2,41 @@ const fs = require('fs');
 
 const ndjson = require('ndjson');
 const svgBuilder = require('svg-builder')
+const ProgressBar = require('progress');
 
-const program = require('./cli')(process.argv);
+const options = require('./cli')(process.argv);
 
-// Get argruments
-const INPUT_FILE = program.input || 'input.ndjson';
-const OUTPUT_DIR = program.output || 'output';
-const MAX_OUTPUT = program.max || 100;
-const RECOGNIZED = program.recognized;
+const bar = new ProgressBar(':bar :percent:eta', { total: options.max });
 
 // Counter for file names
 let imageCounter = 0;
 
 // Creating a readstream of the resource file
-fs.createReadStream(INPUT_FILE)
+fs.createReadStream(options.input)
     .pipe(ndjson.parse()) // Piping through the ndjson parser.
     .on('data', (obj) => {
 
-        // Only allow recognized objects, and max output value is checked.
-        if ((RECOGNIZED && !obj.recognized) || (MAX_OUTPUT != -1 && imageCounter > MAX_OUTPUT)) {
+        // If only recognized objects are allowed, check for it
+        if (options.recognized && !obj.recognized) {
+            return;
+        }
+
+
+        // If options.max is not 0 (no limit) or 
+        if (options.max != 0 && imageCounter > options.max) {
             return;
         }
 
         // Create directory if not already existing.
-        if (!fs.existsSync(OUTPUT_DIR)) {
-            fs.mkdirSync(OUTPUT_DIR);
+        if (!fs.existsSync(options.output)) {
+            fs.mkdirSync(options.output);
         }
 
         // Check if path is a file.
-        fs.stat(OUTPUT_DIR, (err, stats) => {
+        fs.stat(options.output, (err, stats) => {
             if (!stats.isDirectory()) {
-                throw new Error('Output directory is a file')
+                console.log('Output path is a file');
+                process.exit();
             }
         });
 
@@ -71,7 +75,14 @@ fs.createReadStream(INPUT_FILE)
         // Resetting the virtual DOM.
         svgDrawing.reset();
 
+        const filename = options.output + '/' + obj.word + imageCounter + '.svg';
+
         // Writing the svg string to file.
-        fs.createWriteStream(OUTPUT_DIR + '/' + obj.word + imageCounter + '.svg').write(output);
+        fs.writeFile(filename, output, () => {
+            bar.tick();
+            if (bar.complete) {
+                console.log('Done!');
+            }
+        });
         imageCounter++;
     });
